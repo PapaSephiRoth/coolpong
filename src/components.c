@@ -8,11 +8,11 @@ void update_position(Position* p, Velocity const* v, float time_delta) {
 
 Paddle paddle_create(int width, int height, float x, float y) {
   return (Paddle){
-    width,
-    height,
+    .width=width,
+    .height=height,
     {
-      x,
-      y
+      .x=x,
+      .y=y
     }
   };
 }
