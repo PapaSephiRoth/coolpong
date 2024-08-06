@@ -1,10 +1,7 @@
 #pragma once
 #include "raylib.h"
 
-typedef struct {
-  float x;
-  float y;
-} Position;
+typedef Vector2 Position;
 
 typedef struct {
   float speed;
@@ -27,3 +24,5 @@ Paddle paddle_create(int width, int height, float x, float y);
 Ball ball_create(int radius, float x, float y, float dx, float dy);
 
 void update_position(Position* pos, Velocity const* vel, float time_delta);
+
+float ball_paddle_collision(Ball const* ball, Paddle const* paddle);

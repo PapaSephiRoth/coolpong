@@ -18,7 +18,6 @@ typedef struct {
   KeyboardKey DOWN;
 } ControlScheme;
 
-// TODO(SEAN) change control keys to be different for both
 static const ControlScheme control_schemes[PADDLE_COUNT] = {
     [PADDLE_RIGHT] = {KEY_W, KEY_S}, [PADDLE_LEFT] = {KEY_UP, KEY_DOWN}};
 
@@ -39,21 +38,24 @@ int main(void) {
   };
 
   Ball ball = ball_create(10, (float)screen_width / 2, (float)screen_height / 2,
-                          200, -250);
+                          250, -250);
   InitWindow(screen_width, screen_height, "Pong");
-  SetTargetFPS(120);
-
+  SetTargetFPS(400);
   float time_delta;
   char FPS[8];
-
   while (!WindowShouldClose()) {
     time_delta = GetFrameTime();
-
-    // TODO(Sean) handle potential error
     sprintf(FPS, "%d", GetFPS());
 
     for (int i = 0; i < PADDLE_COUNT; ++i) {
       move_paddle(&paddles[i], &control_schemes[i], time_delta);
+      
+      int d;
+      if((d = ball_paddle_collision(&ball, &paddles[i]))) {
+        ball.pos.x = d;
+        ball.vel.direction.x *= -1;
+        ball.vel.speed += 30;
+      };
     }
 
     ball_wall_collision_handler(&ball);
@@ -61,15 +63,16 @@ int main(void) {
 
     BeginDrawing();
     ClearBackground(BLACK);
+
+    DrawLine(screen_width / 2, 0, screen_width / 2, screen_height, GRAY);
     DrawText(FPS, 20, 20, 20, YELLOW);
 
-    Paddle *pdl;
+    DrawCircle(ball.pos.x, ball.pos.y, ball.radius, WHITE);
     for (int i = 0; i < PADDLE_COUNT; ++i) {
-      pdl = &paddles[i];
-      DrawRectangle(pdl->pos.x, pdl->pos.y, pdl->width, pdl->height, WHITE);
+      DrawRectangle(paddles[i].pos.x, paddles[i].pos.y, paddles[i].width,
+                    paddles[i].height, WHITE);
     }
 
-    DrawCircle(ball.pos.x, ball.pos.y, ball.radius, WHITE);
     EndDrawing();
   }
 
